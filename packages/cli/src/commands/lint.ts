@@ -1,8 +1,13 @@
 import { join } from "node:path";
 import kleur from "kleur";
-import { parseSkillFile } from "../parser.js";
-import { lintSkill, DEFAULT_LINT_CONFIG, type LintConfig } from "../linter.js";
-import { findSkillFiles, loadConfig } from "../config.js";
+import {
+  parseSkillFile,
+  lintSkill,
+  DEFAULT_LINT_CONFIG,
+  findSkillFiles,
+  loadConfig,
+  type LintConfig,
+} from "@crosskill/core/node";
 
 interface LintOptions {
   cwd?: string;

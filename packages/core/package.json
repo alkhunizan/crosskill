@@ -1,0 +1,60 @@
+{
+  "name": "@crosskill/core",
+  "version": "0.2.0",
+  "description": "Cross-platform compiler for AI coding-agent skills — core library",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node --sourcemap=linked && bun build ./src/node.ts --outdir ./dist --target node --sourcemap=linked && bun run build:types",
+    "build:types": "tsc -p tsconfig.json",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.5.0"
+  },
+  "keywords": [
+    "ai",
+    "ai-agents",
+    "claude-code",
+    "cursor",
+    "codex",
+    "skills",
+    "compiler",
+    "cross-platform"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alkhunizan/crosskill.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://crosskill.dev",
+  "bugs": {
+    "url": "https://github.com/alkhunizan/crosskill/issues"
+  },
+  "license": "MIT",
+  "author": "Aziz Al-Khunizan <hello@azizme.com> (https://azizme.com)"
+}

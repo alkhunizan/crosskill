@@ -1,76 +1,33 @@
 {
-  "name": "crosskill",
-  "version": "0.1.0",
-  "description": "Write AI coding-agent skills once, compile to every tool. Claude Code, Cursor, Codex, Windsurf, Aider, OpenCode, Gemini CLI.",
+  "name": "crosskill-monorepo",
+  "version": "0.2.0",
+  "private": true,
   "type": "module",
-  "bin": {
-    "crosskill": "./dist/cli.js"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist",
-    "skills",
-    "README.md",
-    "LICENSE"
+  "workspaces": [
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "build": "bun build ./src/cli.ts --outdir ./dist --target node --sourcemap=linked && bun build ./src/index.ts --outdir ./dist --target node --sourcemap=linked",
-    "dev": "bun --watch ./src/cli.ts",
+    "build": "bun run --filter '@crosskill/core' build && bun run --filter 'crosskill' build",
     "test": "bun test",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.ts\""
-  },
-  "dependencies": {
-    "commander": "^12.1.0",
-    "gray-matter": "^4.0.3",
-    "kleur": "^4.1.5",
-    "prompts": "^2.4.2",
-    "zod": "^3.23.8"
+    "typecheck": "bun run --filter '@crosskill/core' typecheck && bun run --filter 'crosskill' typecheck",
+    "format": "prettier --write \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\""
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/prompts": "^2.4.9",
+    "@types/node": "^20.12.7",
     "prettier": "^3.3.3",
     "typescript": "^5.5.0"
   },
   "engines": {
     "node": ">=18"
   },
-  "keywords": [
-    "ai",
-    "ai-agents",
-    "claude-code",
-    "cursor",
-    "codex",
-    "windsurf",
-    "aider",
-    "opencode",
-    "gemini-cli",
-    "skills",
-    "prompts",
-    "agents-md",
-    "skill-md",
-    "cli",
-    "compiler",
-    "cross-platform",
-    "developer-tools"
-  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/azizme-com/crosskill.git"
+    "url": "https://github.com/alkhunizan/crosskill.git"
   },
   "homepage": "https://crosskill.dev",
-  "bugs": {
-    "url": "https://github.com/azizme-com/crosskill/issues"
-  },
-  "author": "Aziz Al-Khunizan <hello@azizme.com> (https://azizme.com)",
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Aziz Al-Khunizan <hello@azizme.com> (https://azizme.com)"
 }

@@ -9,11 +9,14 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseRef } from "../src/resolvers/resolver.js";
-import { buildCandidateUrls, createGithubResolver } from "../src/resolvers/github.js";
-import { localResolver } from "../src/resolvers/local.js";
+import {
+  parseRef,
+  buildCandidateUrls,
+  createGithubResolver,
+  localResolver,
+  sha256,
+} from "@crosskill/core/node";
 import { addCommand } from "../src/commands/add.js";
-import { sha256 } from "../src/lockfile.js";
 
 const VALID_SKILL = `---
 name: hello-world

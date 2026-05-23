@@ -1,0 +1,36 @@
+{
+  "name": "@crosskill/skills",
+  "version": "0.2.0",
+  "description": "Starter skills for crosskill — production-ready *.skill.md files you can drop into any AI coding tool",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./*": "./*"
+  },
+  "files": [
+    "**/skill.md",
+    "index.js",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alkhunizan/crosskill.git",
+    "directory": "packages/skills"
+  },
+  "homepage": "https://crosskill.dev",
+  "license": "MIT",
+  "author": "Aziz Al-Khunizan <hello@azizme.com> (https://azizme.com)",
+  "keywords": [
+    "ai",
+    "skills",
+    "claude-code",
+    "cursor",
+    "codex",
+    "agents-md"
+  ]
+}

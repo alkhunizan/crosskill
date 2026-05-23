@@ -12,10 +12,10 @@ import {
   stringifyLockfile,
   toPosixPath,
   writeLockfile,
+  parseSkillString,
   type Lockfile,
-} from "../src/lockfile.js";
+} from "@crosskill/core/node";
 import { buildCommand, planBuild } from "../src/commands/build.js";
-import { parseSkillString } from "../src/parser.js";
 
 const SKILL_A = `---
 name: skill-a

@@ -16,9 +16,9 @@ import {
   listExistingSnapshots,
   readSnapshot,
   writeSnapshot,
-} from "../src/snapshots.js";
+  type EvalRunner,
+} from "@crosskill/core/node";
 import { testCommand } from "../src/commands/test.js";
-import type { EvalRunner } from "../src/runners/runner.js";
 
 const SKILL_A = `---
 name: skill-a

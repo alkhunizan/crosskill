@@ -1,10 +1,11 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import kleur from "kleur";
-import { parseSkillFile } from "../parser.js";
-import { COMPILERS } from "../compilers/index.js";
-import { findSkillFiles, loadConfig } from "../config.js";
 import {
+  parseSkillFile,
+  COMPILERS,
+  findSkillFiles,
+  loadConfig,
   CROSSKILL_VERSION,
   LOCKFILE_NAME,
   LOCKFILE_VERSION,
@@ -16,8 +17,10 @@ import {
   type Lockfile,
   type LockDrift,
   type SkillLockEntry,
-} from "../lockfile.js";
-import type { CompileResult, Skill, SupportedTarget } from "../schema.js";
+  type CompileResult,
+  type Skill,
+  type SupportedTarget,
+} from "@crosskill/core/node";
 
 interface BuildOptions {
   cwd?: string;

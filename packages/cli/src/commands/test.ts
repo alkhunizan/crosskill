@@ -1,19 +1,22 @@
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import kleur from "kleur";
-import { parseSkillFile } from "../parser.js";
-import { COMPILERS } from "../compilers/index.js";
-import { findSkillFiles, loadConfig } from "../config.js";
 import {
+  parseSkillFile,
+  COMPILERS,
+  findSkillFiles,
+  loadConfig,
   SNAPSHOTS_DIR,
   checkSnapshot,
   compactLineDiff,
   listExistingSnapshots,
+  createOllamaRunner,
   type SnapshotResult,
-} from "../snapshots.js";
-import { createOllamaRunner } from "../runners/ollama.js";
-import type { EvalRunner } from "../runners/runner.js";
-import type { Skill, SkillExample, SupportedTarget } from "../schema.js";
+  type EvalRunner,
+  type Skill,
+  type SkillExample,
+  type SupportedTarget,
+} from "@crosskill/core/node";
 
 interface TestOptions {
   cwd?: string;

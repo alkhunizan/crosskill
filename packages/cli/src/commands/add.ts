@@ -1,11 +1,15 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import kleur from "kleur";
-import { parseSkillString } from "../parser.js";
-import { sha256 } from "../lockfile.js";
-import { localResolver } from "../resolvers/local.js";
-import { createGithubResolver } from "../resolvers/github.js";
-import { parseRef, type SkillResolver, type ResolvedSkill } from "../resolvers/resolver.js";
+import {
+  parseSkillString,
+  sha256,
+  localResolver,
+  createGithubResolver,
+  parseRef,
+  type SkillResolver,
+  type ResolvedSkill,
+} from "@crosskill/core/node";
 
 export interface AddOptions {
   cwd?: string;

@@ -1,0 +1,61 @@
+{
+  "name": "crosskill",
+  "version": "0.2.0",
+  "description": "Write AI coding-agent skills once. Compile to Claude Code, Cursor, Codex, Windsurf, Aider, OpenCode, Gemini CLI.",
+  "type": "module",
+  "bin": {
+    "crosskill": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build ./src/cli.ts --outdir ./dist --target node --sourcemap=linked",
+    "test": "bun test || true",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@crosskill/core": "workspace:*",
+    "@crosskill/skills": "workspace:*",
+    "commander": "^12.1.0",
+    "kleur": "^4.1.5",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/prompts": "^2.4.9",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "ai-agents",
+    "claude-code",
+    "cursor",
+    "codex",
+    "windsurf",
+    "aider",
+    "opencode",
+    "gemini-cli",
+    "skills",
+    "compiler",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alkhunizan/crosskill.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://crosskill.dev",
+  "bugs": {
+    "url": "https://github.com/alkhunizan/crosskill/issues"
+  },
+  "license": "MIT",
+  "author": "Aziz Al-Khunizan <hello@azizme.com> (https://azizme.com)"
+}

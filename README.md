@@ -260,7 +260,24 @@ Inputs:
 
 PRs welcome — especially new compiler targets. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-Easiest first PR: **add a new starter skill** to `./skills/`.
+Easiest first PR: **add a new starter skill** to `./packages/skills/`.
+
+### Repository layout
+
+This repo is a Bun-workspace monorepo:
+
+- `packages/core/` — `@crosskill/core` library (browser-safe parser, linter, compilers; Node-only helpers live at `@crosskill/core/node`)
+- `packages/cli/` — `crosskill` CLI binary, depends on `@crosskill/core` via `workspace:*`
+- `packages/skills/` — `@crosskill/skills`, the starter skills shipped to every consumer
+- `apps/web/` — `crosskill.dev` web playground (coming in v0.3.0)
+- `apps/desktop/` — `crosskill.app` Tauri desktop app (coming in v0.4.0)
+
+```bash
+bun install            # install all workspace deps
+bun run build          # build @crosskill/core then crosskill
+bun test               # 85 tests across packages
+bun run typecheck      # strict TS, no any
+```
 
 ## License
 
