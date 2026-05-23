@@ -8,8 +8,10 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             fs_bridge::open_workspace,
+            fs_bridge::open_single_file,
             fs_bridge::write_outputs,
             fs_bridge::read_file,
+            fs_bridge::create_skill,
             watcher::start_watching,
             watcher::stop_watching,
         ])

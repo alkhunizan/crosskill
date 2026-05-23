@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import {
@@ -11,6 +12,8 @@ import {
   EyeOff,
   Github,
   Sparkles,
+  Plus,
+  FilePlus,
 } from "lucide-react";
 import {
   parseSkillString,
@@ -31,6 +34,11 @@ interface Workspace {
   skills: SkillFile[];
 }
 
+interface StandaloneSkill {
+  path: string;
+  content: string;
+}
+
 interface ParseState {
   results: CompileResult[];
   issues: LintIssue[];
@@ -45,6 +53,14 @@ const EMPTY_STATE: ParseState = {
   skillName: "",
 };
 
+const KEBAB = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
+
+function splitPath(p: string): { dir: string; name: string } {
+  const i = Math.max(p.lastIndexOf("/"), p.lastIndexOf("\\"));
+  if (i < 0) return { dir: ".", name: p };
+  return { dir: p.slice(0, i), name: p.slice(i + 1) };
+}
+
 export default function App() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [activePath, setActivePath] = useState<string | null>(null);
@@ -52,13 +68,14 @@ export default function App() {
   const [dirty, setDirty] = useState(false);
   const [watching, setWatching] = useState(false);
   const [status, setStatus] = useState<{ text: string; tone: "ok" | "err" | "warn" | "muted" }>({
-    text: "Open a folder to begin.",
+    text: "Open a folder, drag a file in, or create a new skill.",
     tone: "muted",
   });
   const [activeTab, setActiveTab] = useState(0);
 
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const watchUnlistenRef = useRef<UnlistenFn | null>(null);
+  const dropUnlistenRef = useRef<UnlistenFn | null>(null);
 
   const handleEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -67,8 +84,12 @@ export default function App() {
   async function openWorkspace() {
     const selected = await open({ directory: true, multiple: false });
     if (typeof selected !== "string") return;
+    await loadWorkspace(selected);
+  }
+
+  async function loadWorkspace(root: string) {
     try {
-      const ws = await invoke<Workspace>("open_workspace", { root: selected });
+      const ws = await invoke<Workspace>("open_workspace", { root });
       setWorkspace(ws);
       if (ws.skills.length > 0) {
         const first = ws.skills[0]!;
@@ -82,13 +103,85 @@ export default function App() {
         setActivePath(null);
         setContent("");
         setStatus({
-          text: `Opened ${ws.root} · no .skill.md files yet.`,
+          text: `Opened ${ws.root} · no skill files yet — click + to add one.`,
           tone: "warn",
         });
       }
       setDirty(false);
     } catch (err) {
-      setStatus({ text: `⨯ ${(err as Error).message ?? String(err)}`, tone: "err" });
+      setStatus({
+        text: `⨯ ${(err as Error).message ?? String(err)}`,
+        tone: "err",
+      });
+    }
+  }
+
+  async function openSingleFile() {
+    const selected = await open({
+      multiple: false,
+      filters: [{ name: "Skill files", extensions: ["md"] }],
+    });
+    if (typeof selected !== "string") return;
+    await loadSingleFile(selected);
+  }
+
+  async function loadSingleFile(filePath: string) {
+    try {
+      const standalone = await invoke<StandaloneSkill>("open_single_file", { path: filePath });
+      // Treat the file's parent dir as a workspace-of-one so save still works.
+      const { dir, name } = splitPath(standalone.path);
+      setWorkspace({
+        root: dir,
+        skills: [{ path: name, content: standalone.content }],
+      });
+      setActivePath(name);
+      setContent(standalone.content);
+      setStatus({ text: `Loaded ${standalone.path}.`, tone: "ok" });
+      setDirty(false);
+    } catch (err) {
+      setStatus({
+        text: `⨯ ${(err as Error).message ?? String(err)}`,
+        tone: "err",
+      });
+    }
+  }
+
+  async function newSkill() {
+    if (!workspace) {
+      setStatus({
+        text: "Open a folder first — the new skill needs somewhere to live.",
+        tone: "warn",
+      });
+      return;
+    }
+    // Native window.prompt is blocked in Tauri 2 webviews. Use a one-line
+    // input dialog with the document selection trick: append an input, focus
+    // it, and resolve when the user presses Enter or blurs it.
+    const name = await promptInline({
+      title: "New skill",
+      label: "Skill name (kebab-case, e.g. my-skill):",
+      placeholder: "my-skill",
+      validate: (v) =>
+        KEBAB.test(v) || "Use lowercase letters, digits, and hyphens. Min 2 chars.",
+    });
+    if (!name) return;
+    try {
+      const rel = await invoke<string>("create_skill", { root: workspace.root, name });
+      // Re-scan so the new file shows in the sidebar.
+      const ws = await invoke<Workspace>("open_workspace", { root: workspace.root });
+      setWorkspace(ws);
+      const created = ws.skills.find((s) => s.path === rel) ?? ws.skills[0];
+      if (created) {
+        setActivePath(created.path);
+        setContent(created.content);
+      }
+      setStatus({ text: `Created ${rel}.`, tone: "ok" });
+      setDirty(false);
+    } catch (err) {
+      setStatus({
+        text: `⨯ ${(err as Error).message ?? String(err)}`,
+        tone: "err",
+      });
     }
   }
 
@@ -132,12 +225,9 @@ export default function App() {
       const skill = parseSkillString(content);
       const results = compileSkillAll(skill, "");
       const outputs = results.map((r) => ({
-        path: r.outputPath
-          .replace(/^[/\\]+/, "")
-          .replace(/\\/g, "/"),
+        path: r.outputPath.replace(/^[/\\]+/, "").replace(/\\/g, "/"),
         content: r.content,
       }));
-      // Persist the source skill itself too — the user might have edited it.
       outputs.push({ path: activePath, content });
       const n = await invoke<number>("write_outputs", {
         root: workspace.root,
@@ -145,7 +235,6 @@ export default function App() {
       });
       setStatus({ text: `✓ Saved ${n} file(s).`, tone: "ok" });
       setDirty(false);
-      // Reflect the change in our in-memory workspace.
       setWorkspace((ws) =>
         ws
           ? {
@@ -177,8 +266,40 @@ export default function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [save]);
 
-  // Watch toggle: start the Rust-side watcher and re-read the workspace when
-  // an external editor changes a `*.skill.md` file.
+  // Native Tauri drag-and-drop: any file the OS hands us gets opened.
+  // The webview's HTML5 dnd is hijacked by Tauri on Windows, so we use the
+  // webview's `onDragDropEvent` instead.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const wv = getCurrentWebview();
+      const unlisten = await wv.onDragDropEvent(async (e) => {
+        if (cancelled) return;
+        if (e.payload.type !== "drop") return;
+        const paths = e.payload.paths;
+        if (!paths || paths.length === 0) return;
+        // Pick the first .md file dropped; ignore non-skill files.
+        const first = paths.find((p) =>
+          p.toLowerCase().endsWith(".md")
+        );
+        if (!first) {
+          setStatus({
+            text: "⨯ Drop a .md / .skill.md file (any folder will also work).",
+            tone: "err",
+          });
+          return;
+        }
+        await loadSingleFile(first);
+      });
+      dropUnlistenRef.current = unlisten;
+    })();
+    return () => {
+      cancelled = true;
+      if (dropUnlistenRef.current) dropUnlistenRef.current();
+      dropUnlistenRef.current = null;
+    };
+  }, []);
+
   useEffect(() => {
     if (!workspace) return;
     let cancelled = false;
@@ -193,7 +314,6 @@ export default function App() {
               .then((ws) => {
                 if (cancelled) return;
                 setWorkspace(ws);
-                // If the active file moved/disappeared, jump to the first one.
                 if (
                   activePath &&
                   !ws.skills.some((s) => s.path === activePath) &&
@@ -226,7 +346,10 @@ export default function App() {
   }, [watching, workspace, activePath]);
 
   const active = parsed.results[activeTab];
-  const skillLabel = parsed.skillName || activePath?.replace(/\.skill\.md$/, "").split("/").pop() || "skill";
+  const skillLabel =
+    parsed.skillName ||
+    activePath?.replace(/\.skill\.md$/, "").split("/").pop() ||
+    "skill";
 
   return (
     <div className="app">
@@ -234,13 +357,35 @@ export default function App() {
         <div className="app-header-left">
           <div className="app-logo" aria-hidden />
           <div className="app-title">crosskill</div>
-          <div className="app-subtitle">desktop · v0.4.0</div>
+          <div className="app-subtitle">desktop · v0.4.3</div>
         </div>
         <div className="app-header-right">
-          <button className="btn btn-secondary" onClick={openWorkspace}>
+          <button
+            className="btn btn-secondary"
+            onClick={openWorkspace}
+            title="Open a folder of skills"
+          >
             <FolderOpen size={12} /> Open folder
           </button>
-          <label className="watch-toggle">
+          <button
+            className="btn btn-secondary"
+            onClick={openSingleFile}
+            title="Open a single .md skill file"
+          >
+            <FileText size={12} /> Open file…
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={newSkill}
+            disabled={!workspace}
+            title="Add a new skill to the open workspace"
+          >
+            <Plus size={12} /> New skill
+          </button>
+          <label
+            className="watch-toggle"
+            title={workspace ? "Auto-reload when files change" : "Open a folder first"}
+          >
             <input
               type="checkbox"
               checked={watching}
@@ -273,28 +418,49 @@ export default function App() {
       <aside className="app-sidebar">
         <div className="sidebar-section">Workspace</div>
         {workspace ? (
-          workspace.skills.length === 0 ? (
-            <div className="sidebar-empty">
-              No <code>.skill.md</code> files found.
-              <br />
-              Drop one into the folder and toggle <em>Watch</em>.
+          <>
+            <div className="sidebar-root" title={workspace.root}>
+              {splitPath(workspace.root).name}
             </div>
-          ) : (
-            workspace.skills.map((s) => (
-              <button
-                key={s.path}
-                className={`sidebar-item ${s.path === activePath ? "active" : ""}`}
-                onClick={() => pickSkill(s.path)}
-                title={s.path}
-              >
-                {s.path.split("/").pop()}
-              </button>
-            ))
-          )
+            {workspace.skills.length === 0 ? (
+              <div className="sidebar-empty">
+                No skill files here yet.
+                <br />
+                <br />
+                Click <strong>+ New skill</strong> to add one, drop a{" "}
+                <code>.md</code> file onto the window, or toggle{" "}
+                <em>Watch</em> and create the file in your editor.
+              </div>
+            ) : (
+              workspace.skills.map((s) => (
+                <button
+                  key={s.path}
+                  className={`sidebar-item ${s.path === activePath ? "active" : ""}`}
+                  onClick={() => pickSkill(s.path)}
+                  title={s.path}
+                >
+                  {s.path.split("/").pop()}
+                </button>
+              ))
+            )}
+          </>
         ) : (
           <div className="sidebar-empty">
-            Click <strong>Open folder</strong> to scan a repo for{" "}
-            <code>.skill.md</code> files.
+            Get started:
+            <ul className="sidebar-tips">
+              <li>
+                <FolderOpen size={11} /> <strong>Open folder</strong> — pick a
+                repo with <code>.skill.md</code> files.
+              </li>
+              <li>
+                <FileText size={11} /> <strong>Open file…</strong> — load one{" "}
+                <code>.md</code> skill.
+              </li>
+              <li>
+                <FilePlus size={11} /> Drop a <code>.md</code> file onto this
+                window.
+              </li>
+            </ul>
           </div>
         )}
       </aside>
@@ -335,7 +501,7 @@ export default function App() {
             ) : (
               <div className="empty-state">
                 <Sparkles size={32} style={{ opacity: 0.3, marginBottom: 12 }} />
-                Open a folder and pick a skill to edit.
+                Open a folder, pick a file, or drop one onto the window.
               </div>
             )}
           </div>
@@ -362,7 +528,9 @@ export default function App() {
           <div className="output-body">
             {active ? (
               <>
-                <div className="output-path">{active.outputPath.replace(/\\/g, "/")}</div>
+                <div className="output-path">
+                  {active.outputPath.replace(/\\/g, "/")}
+                </div>
                 {active.content}
               </>
             ) : parsed.error ? (
@@ -402,14 +570,87 @@ export default function App() {
               <span>Compiled to {parsed.results.length} target(s)</span>
               {dirty && <span className="status-warn">unsaved changes</span>}
             </>
-          ) : (
-            <span>{status.text}</span>
-          )}
+          ) : null}
         </div>
-        <div>
-          <span>{status.text}</span>
+        <div
+          className={
+            status.tone === "err"
+              ? "status-error"
+              : status.tone === "warn"
+              ? "status-warn"
+              : status.tone === "ok"
+              ? "status-success"
+              : ""
+          }
+        >
+          {status.text}
         </div>
       </footer>
     </div>
   );
+}
+
+/**
+ * Inline prompt — a small modal that replaces window.prompt (which the
+ * Tauri webview won't show on Windows). Resolves to the entered value, or
+ * null if the user dismissed it.
+ */
+function promptInline(opts: {
+  title: string;
+  label: string;
+  placeholder?: string;
+  validate?: (v: string) => true | string;
+}): Promise<string | null> {
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "prompt-overlay";
+    overlay.innerHTML = `
+      <div class="prompt-box">
+        <div class="prompt-title">${opts.title}</div>
+        <label class="prompt-label">${opts.label}</label>
+        <input class="prompt-input" placeholder="${opts.placeholder ?? ""}" />
+        <div class="prompt-error"></div>
+        <div class="prompt-actions">
+          <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+          <button class="btn btn-primary" data-action="ok">OK</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector<HTMLInputElement>(".prompt-input")!;
+    const errorEl = overlay.querySelector<HTMLDivElement>(".prompt-error")!;
+    const cancelBtn = overlay.querySelector<HTMLButtonElement>('[data-action="cancel"]')!;
+    const okBtn = overlay.querySelector<HTMLButtonElement>('[data-action="ok"]')!;
+
+    function cleanup(value: string | null) {
+      document.body.removeChild(overlay);
+      resolve(value);
+    }
+    function confirm() {
+      const v = input.value.trim();
+      if (opts.validate) {
+        const r = opts.validate(v);
+        if (r !== true) {
+          errorEl.textContent = r;
+          return;
+        }
+      }
+      cleanup(v || null);
+    }
+
+    cancelBtn.addEventListener("click", () => cleanup(null));
+    okBtn.addEventListener("click", confirm);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        confirm();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        cleanup(null);
+      }
+    });
+
+    // Focus next tick so the overlay is in the DOM.
+    setTimeout(() => input.focus(), 0);
+  });
 }

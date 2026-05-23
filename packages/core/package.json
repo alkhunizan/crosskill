@@ -1,6 +1,6 @@
 {
   "name": "@crosskill/core",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Cross-platform compiler for AI coding-agent skills — core library",
   "type": "module",
   "main": "./dist/index.js",

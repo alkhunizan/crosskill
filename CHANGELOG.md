@@ -5,6 +5,35 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.4.3] — 2026-05-23
+
+### Added (desktop)
+- **Open file…** — load a single `.md` skill without picking a folder.
+  Treats the file's parent as a workspace-of-one so Save still writes
+  outputs next to it.
+- **+ New skill** — create a starter `crosskill/<name>.skill.md` in the
+  open workspace via an in-app prompt. Validates kebab-case, refuses
+  path traversal.
+- **Drag-and-drop** — drop a `.md` file onto the window to open it.
+  Uses Tauri's native drag-drop event (HTML5 dnd is blocked in the
+  webview on Windows).
+- Tauri `create_skill` and `open_single_file` Rust commands behind a
+  path-traversal guard.
+
+### Fixed (desktop)
+- **Sidebar empty when the workspace had no `*.skill.md` files.** The
+  scanner now recognises any `.md` file whose YAML frontmatter declares
+  `targets:`, so repos with custom naming (e.g. `code-review.md`) light
+  up without renaming.
+- **Scan depth increased** from 4 → 8 to handle deeper repo layouts.
+- **Empty-state guidance** in the sidebar now lists the three onboarding
+  paths (folder, file, drag-and-drop) so the app isn't a dead end when
+  it can't find anything.
+- **Status bar** now shows the latest action result instead of swallowing
+  it under the parse status — the right-hand cell carries the
+  `setStatus()` text with color coding.
+- Ignored-dirs list extended with `.turbo` and `.cache`.
+
 ## [0.4.2] — 2026-05-23
 
 ### Fixed

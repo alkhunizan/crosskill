@@ -1,6 +1,6 @@
 [package]
 name = "crosskill"
-version = "0.4.2"
+version = "0.4.3"
 description = "crosskill desktop"
 edition = "2021"
 authors = ["Aziz Al-Khunizan <hello@azizme.com>"]
