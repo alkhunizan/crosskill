@@ -33,3 +33,17 @@ jobs:
           test -f .claude/skills/code-reviewer/SKILL.md
           test -f .cursor/rules/code-reviewer.mdc
           test -f AGENTS.md
+          test -f crosskill.lock
+          node $GITHUB_WORKSPACE/dist/cli.js check
+          node $GITHUB_WORKSPACE/dist/cli.js test -u
+          node $GITHUB_WORKSPACE/dist/cli.js test
+      - name: Validate composite action.yml
+        run: |
+          node -e "
+            const yaml = require('node:fs').readFileSync('.github/actions/crosskill/action.yml', 'utf8');
+            // Cheap structural assertions; full schema validation happens server-side when used.
+            for (const f of ['name:', 'description:', 'runs:', 'using: composite', 'inputs:', 'mode:', 'version:']) {
+              if (!yaml.includes(f)) { console.error('action.yml missing:', f); process.exit(1); }
+            }
+            console.log('action.yml OK');
+          "

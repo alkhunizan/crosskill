@@ -210,6 +210,40 @@ Full spec: [docs/format.md](./docs/format.md).
 }
 ```
 
+## GitHub Action
+
+Drop crosskill into a PR workflow to catch skill drift before it lands. Lint, lockfile-drift check, and snapshot-drift check — one composite step:
+
+```yaml
+# .github/workflows/skills.yml
+name: skills
+on:
+  pull_request:
+    paths: ["crosskill/**", "crosskill.config.json", "crosskill.lock"]
+  push:
+    branches: [main]
+    paths: ["crosskill/**", "crosskill.config.json", "crosskill.lock"]
+
+jobs:
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azizme-com/crosskill/.github/actions/crosskill@main
+        with:
+          mode: all # lint | check | test | all
+          # version: 0.1.0   # pin for reproducibility; omit for `latest`
+```
+
+Inputs:
+
+| Input | Default | Notes |
+| --- | --- | --- |
+| `mode` | `all` | `lint`, `check`, `test`, or `all` (lint → check → test, fail fast) |
+| `version` | `latest` | Any version published to npm |
+| `skills-dir` | `""` | Override; usually leave empty and use `crosskill.config.json` |
+| `working-directory` | `"."` | Run from a subdirectory if your skills live there |
+
 ## Roadmap
 
 - [x] Compilers for 7 platforms
@@ -218,7 +252,7 @@ Full spec: [docs/format.md](./docs/format.md).
 - [x] `crosskill test` — snapshot every compiled output; `--eval` pipes `examples:` through local Ollama
 - [x] `crosskill.lock` for reproducible team builds (`crosskill build` writes; `crosskill check` / `build --frozen` verifies)
 - [ ] [crosskill.dev](https://crosskill.dev) — public skill registry & search
-- [ ] GitHub Action for skill CI on PRs
+- [x] GitHub Action for skill CI on PRs (`azizme-com/crosskill/.github/actions/crosskill`)
 - [ ] VS Code & Cursor extension with live multi-target preview
 - [ ] Private team registries (optional paid tier)
 

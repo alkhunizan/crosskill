@@ -1,0 +1,26 @@
+# Example workflow — copy this to .github/workflows/skills.yml in your repo
+# to lint + verify skill drift on every PR.
+#
+# This file is ALSO the marketplace docs example for the crosskill action,
+# so we keep it minimal. For the lint-only or check-only variants, set
+# `mode: lint` or `mode: check`.
+
+name: skills (example)
+
+on:
+  workflow_dispatch: # Manual-only in the crosskill repo itself; remove this line in your own repo.
+  # pull_request:
+  #   paths: ["crosskill/**", "crosskill.config.json", "crosskill.lock"]
+  # push:
+  #   branches: [main]
+  #   paths: ["crosskill/**", "crosskill.config.json", "crosskill.lock"]
+
+jobs:
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azizme-com/crosskill/.github/actions/crosskill@main
+        with:
+          mode: all # lint | check | test | all
+          # version: 0.1.0   # pin for reproducibility, or omit for `latest`

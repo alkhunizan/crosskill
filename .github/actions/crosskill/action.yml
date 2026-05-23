@@ -1,0 +1,71 @@
+name: crosskill
+description: >-
+  Lint, snapshot-test, and verify crosskill.lock for AI coding-agent skills.
+  Drop into any PR workflow to catch skill drift before it lands.
+author: Aziz Al-Khunizan
+branding:
+  icon: layers
+  color: purple
+
+inputs:
+  mode:
+    description: >-
+      Which check(s) to run. One of:
+        - lint   : run `crosskill lint`
+        - check  : run `crosskill check` (verify crosskill.lock is up to date)
+        - test   : run `crosskill test` (verify snapshots are up to date)
+        - all    : run lint, then check, then test (fail on first non-zero)
+    required: false
+    default: all
+  version:
+    description: >-
+      crosskill version to install via npx. Defaults to `latest`. Pin to a
+      specific version (e.g. `0.1.0`) for fully reproducible runs.
+    required: false
+    default: latest
+  skills-dir:
+    description: >-
+      Directory containing your `*.skill.md` files. Defaults to `./crosskill`
+      (the convention used by `crosskill init`). If you set `skillsDir` in
+      `crosskill.config.json`, leave this empty — the commands read the
+      config themselves.
+    required: false
+    default: ""
+  working-directory:
+    description: Working directory to run from. Defaults to the repo root.
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js (for npx)
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    - name: Resolve crosskill version
+      id: resolve
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+        echo "Using crosskill@${{ inputs.version }}"
+
+    - name: crosskill lint
+      if: inputs.mode == 'lint' || inputs.mode == 'all'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx -y crosskill@${{ steps.resolve.outputs.version }} lint
+
+    - name: crosskill check (lockfile drift)
+      if: inputs.mode == 'check' || inputs.mode == 'all'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx -y crosskill@${{ steps.resolve.outputs.version }} check
+
+    - name: crosskill test (snapshot drift)
+      if: inputs.mode == 'test' || inputs.mode == 'all'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx -y crosskill@${{ steps.resolve.outputs.version }} test
