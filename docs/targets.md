@@ -46,4 +46,4 @@ Each compiler turns one `*.skill.md` into the native format of the target tool. 
 
 ## Requesting a new target
 
-If your favorite tool isn't here, [open an issue](https://github.com/azizme-com/crosskill/issues/new). A new compiler is usually under 30 lines — see [CONTRIBUTING.md](../CONTRIBUTING.md) for the recipe.
+If your favorite tool isn't here, [open an issue](https://github.com/alkhunizan/crosskill/issues/new). A new compiler is usually under 30 lines — see [CONTRIBUTING.md](../CONTRIBUTING.md) for the recipe.

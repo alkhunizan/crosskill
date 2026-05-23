@@ -12,6 +12,7 @@
     "build:web": "bun run --filter '@crosskill/core' build && bun run --filter '@crosskill/web' build",
     "test": "bun test",
     "typecheck": "bun run --filter '@crosskill/core' typecheck && bun run --filter 'crosskill' typecheck && bun run --filter '@crosskill/web' typecheck && bun run --filter '@crosskill/desktop' typecheck",
+    "bump-version": "bun scripts/bump-version.ts",
     "format": "prettier --write \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\""
   },

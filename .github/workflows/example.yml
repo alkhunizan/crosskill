@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: azizme-com/crosskill/.github/actions/crosskill@main
+      - uses: alkhunizan/crosskill/.github/actions/crosskill@main
         with:
           mode: all # lint | check | test | all
           # version: 0.1.0   # pin for reproducibility, or omit for `latest`

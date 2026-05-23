@@ -5,7 +5,7 @@ Thanks for considering a contribution. The single best PR you can send is **a ne
 ## Quick start
 
 ```bash
-git clone https://github.com/azizme-com/crosskill.git
+git clone https://github.com/alkhunizan/crosskill.git
 cd crosskill
 bun install
 bun test

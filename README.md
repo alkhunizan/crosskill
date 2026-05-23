@@ -8,8 +8,8 @@ Claude Code · Cursor · Codex (`AGENTS.md`) · Windsurf · Aider · OpenCode ·
 
 [![npm](https://img.shields.io/npm/v/crosskill.svg?style=flat-square)](https://www.npmjs.com/package/crosskill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/azizme-com/crosskill?style=flat-square)](https://github.com/azizme-com/crosskill/stargazers)
-[![CI](https://img.shields.io/github/actions/workflow/status/azizme-com/crosskill/ci.yml?style=flat-square)](https://github.com/azizme-com/crosskill/actions)
+[![Stars](https://img.shields.io/github/stars/alkhunizan/crosskill?style=flat-square)](https://github.com/alkhunizan/crosskill/stargazers)
+[![CI](https://img.shields.io/github/actions/workflow/status/alkhunizan/crosskill/ci.yml?style=flat-square)](https://github.com/alkhunizan/crosskill/actions)
 
 </div>
 
@@ -49,6 +49,22 @@ npx crosskill init
 ```
 
 That's it. No keys. No accounts. No Docker. No services.
+
+## Desktop app
+
+Native installers for Windows, macOS, and Linux are on
+[GitHub Releases](https://github.com/alkhunizan/crosskill/releases). The
+desktop app uses the same compiler as the CLI, plus a workspace tree,
+keyboard-driven save, and a "Watch" toggle that recompiles every time a
+`*.skill.md` file changes on disk.
+
+### First-run warnings (we don't have code-signing yet)
+
+- **Windows:** SmartScreen may warn "Windows protected your PC". Click
+  "More info" → "Run anyway".
+- **macOS:** "App can't be opened because Apple cannot check it for malicious
+  software". Right-click the app → Open → Open.
+- **Linux:** No warning. `chmod +x` the AppImage if it isn't executable.
 
 ## Usage
 
@@ -167,7 +183,7 @@ Run `npx crosskill add @crosskill/<name>` to drop any of these into your repo:
 | Zed Assistant | 🚧 Planned | — |
 | Cline | 🚧 Planned | — |
 
-Want another target? [Open an issue](https://github.com/azizme-com/crosskill/issues/new?template=new-target.md).
+Want another target? [Open an issue](https://github.com/alkhunizan/crosskill/issues/new?template=new-target.md).
 
 ## Skill format (`*.skill.md`)
 
@@ -237,7 +253,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: azizme-com/crosskill/.github/actions/crosskill@main
+      - uses: alkhunizan/crosskill/.github/actions/crosskill@main
         with:
           mode: all # lint | check | test | all
           # version: 0.1.0   # pin for reproducibility; omit for `latest`
@@ -260,7 +276,7 @@ Inputs:
 - [x] `crosskill test` — snapshot every compiled output; `--eval` pipes `examples:` through local Ollama
 - [x] `crosskill.lock` for reproducible team builds (`crosskill build` writes; `crosskill check` / `build --frozen` verifies)
 - [ ] [crosskill.dev](https://crosskill.dev) — public skill registry & search
-- [x] GitHub Action for skill CI on PRs (`azizme-com/crosskill/.github/actions/crosskill`)
+- [x] GitHub Action for skill CI on PRs (`alkhunizan/crosskill/.github/actions/crosskill`)
 - [ ] VS Code & Cursor extension with live multi-target preview
 - [ ] Private team registries (optional paid tier)
 

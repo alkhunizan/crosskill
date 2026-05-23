@@ -1,0 +1,41 @@
+version: 2
+
+updates:
+  # npm dependencies across the monorepo. The `directory` setting just needs
+  # to be the repo root; Dependabot follows `workspaces` itself.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    labels: ["dependencies"]
+    groups:
+      next:
+        patterns: ["next", "react", "react-dom"]
+      tauri:
+        patterns: ["@tauri-apps/*", "tauri-*"]
+      types:
+        patterns: ["@types/*"]
+
+  # Tauri Rust deps.
+  - package-ecosystem: cargo
+    directory: "/apps/desktop/src-tauri"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    labels: ["dependencies", "rust"]
+
+  # CI workflows.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(ci)"
+    labels: ["ci"]
