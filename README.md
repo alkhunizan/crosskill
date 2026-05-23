@@ -56,10 +56,13 @@ npx crosskill build
 # 4. Lint before shipping
 npx crosskill lint
 
-# 5. In CI: verify outputs match crosskill.lock
+# 5. Snapshot compiled outputs (run with -u the first time)
+npx crosskill test
+
+# 6. In CI: verify outputs match crosskill.lock
 npx crosskill check
 
-# 6. Install a community skill
+# 7. Install a community skill
 npx crosskill add aziz/najdi-writer
 ```
 
@@ -208,7 +211,7 @@ Full spec: [docs/format.md](./docs/format.md).
 - [x] Compilers for 7 platforms
 - [x] Lint command
 - [x] 10 built-in skills
-- [ ] `crosskill test` — golden-output assertions against local Ollama
+- [x] `crosskill test` — snapshot every compiled output; `--eval` pipes `examples:` through local Ollama
 - [x] `crosskill.lock` for reproducible team builds (`crosskill build` writes; `crosskill check` / `build --frozen` verifies)
 - [ ] [crosskill.dev](https://crosskill.dev) — public skill registry & search
 - [ ] GitHub Action for skill CI on PRs

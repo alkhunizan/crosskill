@@ -1,8 +1,9 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import kleur from "kleur";
 import { parseSkillFile } from "../parser.js";
 import { COMPILERS } from "../compilers/index.js";
+import { findSkillFiles, loadConfig } from "../config.js";
 import {
   CROSSKILL_VERSION,
   LOCKFILE_NAME,
@@ -25,11 +26,6 @@ interface BuildOptions {
   frozen?: boolean;
 }
 
-interface CrosskillConfig {
-  skillsDir: string;
-  outputs?: Partial<Record<SupportedTarget, string>>;
-}
-
 interface SkillSource {
   skill: Skill;
   sourceBytes: Buffer;
@@ -40,34 +36,6 @@ interface BuildPlan {
   aggregatedOutputs: { target: SupportedTarget; path: string; content: string; sections: number }[];
   lockfile: Lockfile;
   skippedCount: number;
-}
-
-function loadConfig(cwd: string): CrosskillConfig {
-  const configPath = join(cwd, "crosskill.config.json");
-  if (!existsSync(configPath)) {
-    return { skillsDir: "./crosskill" };
-  }
-  const raw = readFileSync(configPath, "utf8");
-  return JSON.parse(raw) as CrosskillConfig;
-}
-
-function findSkillFiles(skillsDir: string): string[] {
-  if (!existsSync(skillsDir)) return [];
-  const files: string[] = [];
-  const walk = (dir: string) => {
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      const full = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(full);
-      } else if (entry.isFile() && entry.name.endsWith(".skill.md")) {
-        files.push(full);
-      } else if (entry.isFile() && entry.name === "skill.md") {
-        files.push(full);
-      }
-    }
-  };
-  walk(skillsDir);
-  return files.sort();
 }
 
 function loadSkills(files: string[]): { sources: SkillSource[]; parseError: boolean } {

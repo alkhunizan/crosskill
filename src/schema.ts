@@ -36,6 +36,20 @@ const TargetsSchema = z
   })
   .default({});
 
+/**
+ * Optional `examples:` block in front-matter, consumed by `crosskill test
+ * --eval`. Each example is one user input plus assertions on the LLM
+ * response. Existing skills do not need to add this — `examples` is purely
+ * for the eval-mode test runner.
+ */
+const SkillExampleSchema = z.object({
+  input: z.string().min(1),
+  contains: z.array(z.string()).optional(),
+  matches: z.string().optional(),
+});
+
+export type SkillExample = z.infer<typeof SkillExampleSchema>;
+
 export const SkillFrontmatterSchema = z.object({
   name: z
     .string()
@@ -58,6 +72,7 @@ export const SkillFrontmatterSchema = z.object({
   targets: TargetsSchema,
   tools: z.array(z.string()).optional(),
   inputs: z.array(z.string()).optional(),
+  examples: z.array(SkillExampleSchema).optional(),
   homepage: z.string().url().optional(),
 });
 

@@ -1,38 +1,11 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import kleur from "kleur";
 import { parseSkillFile } from "../parser.js";
 import { lintSkill, DEFAULT_LINT_CONFIG, type LintConfig } from "../linter.js";
+import { findSkillFiles, loadConfig } from "../config.js";
 
 interface LintOptions {
   cwd?: string;
-}
-
-interface CrosskillConfig {
-  skillsDir: string;
-  lint?: Partial<LintConfig>;
-}
-
-function loadConfig(cwd: string): CrosskillConfig {
-  const configPath = join(cwd, "crosskill.config.json");
-  if (!existsSync(configPath)) return { skillsDir: "./crosskill" };
-  return JSON.parse(readFileSync(configPath, "utf8")) as CrosskillConfig;
-}
-
-function findSkillFiles(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-  const files: string[] = [];
-  const walk = (d: string) => {
-    for (const e of readdirSync(d, { withFileTypes: true })) {
-      const full = join(d, e.name);
-      if (e.isDirectory()) walk(full);
-      else if (e.isFile() && (e.name.endsWith(".skill.md") || e.name === "skill.md")) {
-        files.push(full);
-      }
-    }
-  };
-  walk(dir);
-  return files.sort();
 }
 
 export async function lintCommand(opts: LintOptions = {}): Promise<void> {

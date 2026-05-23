@@ -6,6 +6,7 @@ import { buildCommand } from "./commands/build.js";
 import { checkCommand } from "./commands/check.js";
 import { lintCommand } from "./commands/lint.js";
 import { addCommand } from "./commands/add.js";
+import { testCommand } from "./commands/test.js";
 
 const program = new Command();
 
@@ -43,6 +44,15 @@ program
   .description("Lint all skills in this repo")
   .action(async () => {
     await lintCommand();
+  });
+
+program
+  .command("test")
+  .description("Snapshot compiled outputs and (with --eval) run examples through a local LLM")
+  .option("-u, --update-snapshots", "Rewrite snapshots from current output instead of comparing")
+  .option("--eval", "Also pipe each skill's `examples:` through Ollama and assert contains/matches")
+  .action(async (opts: { updateSnapshots?: boolean; eval?: boolean }) => {
+    await testCommand({ updateSnapshots: opts.updateSnapshots, eval: opts.eval });
   });
 
 program
