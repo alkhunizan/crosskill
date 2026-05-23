@@ -56,7 +56,10 @@ npx crosskill build
 # 4. Lint before shipping
 npx crosskill lint
 
-# 5. Install a community skill
+# 5. In CI: verify outputs match crosskill.lock
+npx crosskill check
+
+# 6. Install a community skill
 npx crosskill add aziz/najdi-writer
 ```
 
@@ -206,7 +209,7 @@ Full spec: [docs/format.md](./docs/format.md).
 - [x] Lint command
 - [x] 10 built-in skills
 - [ ] `crosskill test` — golden-output assertions against local Ollama
-- [ ] `crosskill.lock` for reproducible team builds
+- [x] `crosskill.lock` for reproducible team builds (`crosskill build` writes; `crosskill check` / `build --frozen` verifies)
 - [ ] [crosskill.dev](https://crosskill.dev) — public skill registry & search
 - [ ] GitHub Action for skill CI on PRs
 - [ ] VS Code & Cursor extension with live multi-target preview

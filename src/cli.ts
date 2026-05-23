@@ -3,6 +3,7 @@ import { Command } from "commander";
 import kleur from "kleur";
 import { initCommand } from "./commands/init.js";
 import { buildCommand } from "./commands/build.js";
+import { checkCommand } from "./commands/check.js";
 import { lintCommand } from "./commands/lint.js";
 import { addCommand } from "./commands/add.js";
 
@@ -25,8 +26,16 @@ program
 program
   .command("build")
   .description("Compile every skill to every enabled target")
+  .option("--frozen", "Verify outputs match crosskill.lock; do not write (CI mode)")
+  .action(async (opts: { frozen?: boolean }) => {
+    await buildCommand({ frozen: opts.frozen });
+  });
+
+program
+  .command("check")
+  .description("Verify outputs match crosskill.lock (alias for `build --frozen`)")
   .action(async () => {
-    await buildCommand();
+    await checkCommand();
   });
 
 program
