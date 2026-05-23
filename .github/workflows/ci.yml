@@ -21,9 +21,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: bun install
+      # Build @crosskill/core first so its dist/node.d.ts exists when the
+      # CLI typechecks (the CLI imports from @crosskill/core/node, and
+      # `tsc` resolves that via the published .d.ts files).
+      - run: bun run --filter '@crosskill/core' build
       - run: bun run typecheck
       - run: bun test
-      - run: bun run build
+      - run: bun run --filter 'crosskill' build
       - name: Smoke test the CLI
         run: |
           mkdir -p /tmp/smoke && cd /tmp/smoke
