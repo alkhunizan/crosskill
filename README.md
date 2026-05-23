@@ -34,6 +34,8 @@ So you copy-paste. You forget one. They drift. You can't share. Your team can't 
 
 **crosskill** fixes that. Write a skill once. Compile to all of them.
 
+![crosskill desktop](./docs/screenshots/desktop.png)
+
 ## Try it instantly
 
 | Surface | How |
