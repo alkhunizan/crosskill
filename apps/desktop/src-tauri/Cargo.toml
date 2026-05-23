@@ -1,0 +1,28 @@
+[package]
+name = "crosskill"
+version = "0.4.0"
+description = "crosskill desktop"
+edition = "2021"
+authors = ["Aziz Al-Khunizan <hello@azizme.com>"]
+license = "MIT"
+repository = "https://github.com/alkhunizan/crosskill"
+
+[lib]
+name = "crosskill_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-shell = "2"
+notify = "6"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

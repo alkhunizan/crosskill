@@ -5,6 +5,35 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-05-23
+
+### Added
+- **Desktop app at `apps/desktop/`** built on Tauri 2 + Vite + React. Same
+  `@crosskill/core` compiler, but now with native file-system access and a
+  workspace-aware UI.
+  - **Open folder** uses Tauri's native picker and a Rust-side `walkdir` scan
+    (depth 6, skips `node_modules` / `.git` / `dist` / `build` / `.next` /
+    `target` / `out`).
+  - **Save** writes every compiled output for the active skill plus the skill
+    source itself, batched in one Rust call.
+  - **Watch** spins up a `notify` recursive watcher on the workspace root.
+    The Rust side filters for `*.skill.md` changes and emits `skill-changed`
+    events the UI uses to reload.
+  - **Path-traversal guard** in `write_outputs` refuses any path containing
+    `..` or an absolute prefix and verifies the canonical parent is still
+    inside the canonical workspace root.
+  - **Cmd/Ctrl+S** keyboard save.
+  - **System tray** with crosskill tooltip.
+- **`release.yml` GitHub Actions workflow.** Tag push (`v*`) builds Tauri
+  installers on `windows-latest` / `macos-latest` (universal) /
+  `ubuntu-22.04`, attaches `.msi` / `.dmg` / `.AppImage` / `.deb` to a draft
+  GitHub Release, and (when `NPM_TOKEN` is set) publishes `@crosskill/core`,
+  `crosskill`, `@crosskill/skills` to npm.
+
+### Verified
+- `cargo check` of the Rust side compiles cleanly with zero warnings.
+- 85/85 tests still pass; typecheck clean for core / cli / web / desktop.
+
 ## [0.3.0] — 2026-05-23
 
 ### Added

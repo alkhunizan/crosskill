@@ -1,0 +1,115 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-desktop:
+    name: build-desktop (${{ matrix.platform }})
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target universal-apple-darwin
+          - platform: ubuntu-22.04
+            args: ""
+          - platform: windows-latest
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Install Linux deps
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install workspace deps
+        run: bun install
+
+      - name: Build @crosskill/core (browser + node bundles)
+        run: bun run --filter '@crosskill/core' build
+
+      - name: Build desktop installers
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: apps/desktop
+          tagName: ${{ github.ref_name }}
+          releaseName: "crosskill ${{ github.ref_name }}"
+          releaseBody: |
+            See [CHANGELOG.md](https://github.com/alkhunizan/crosskill/blob/main/CHANGELOG.md) for full details.
+
+            ## First-run warnings (we don't have code-signing yet)
+
+            - **Windows:** SmartScreen may warn "Windows protected your PC". Click "More info" → "Run anyway".
+            - **macOS:** "App can't be opened because Apple cannot check it for malicious software". Right-click the app → Open → Open.
+            - **Linux:** No warning. `chmod +x` the AppImage if needed.
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  publish-npm:
+    name: publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: https://registry.npmjs.org
+
+      - run: bun install
+      - run: bun run --filter '@crosskill/core' build
+      - run: bun run --filter 'crosskill' build
+
+      - name: Publish @crosskill/core
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: packages/core
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish crosskill
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: packages/cli
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @crosskill/skills
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: packages/skills
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

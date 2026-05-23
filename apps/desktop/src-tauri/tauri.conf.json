@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "crosskill",
+  "version": "0.4.0",
+  "identifier": "dev.crosskill.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "bun run dev",
+    "beforeBuildCommand": "bun run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "crosskill",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "decorations": true,
+        "transparent": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "dmg", "appimage", "deb"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "shortDescription": "Write AI coding-agent skills once, compile to every tool",
+    "longDescription": "crosskill is a cross-platform skill compiler for Claude Code, Cursor, Codex, Windsurf, Aider, OpenCode, Gemini CLI, Copilot, and Continue. Write one skill.md, deploy to every AI tool. Free and open source.",
+    "category": "DeveloperTool",
+    "copyright": "Copyright 2026 Aziz Al-Khunizan",
+    "publisher": "Aziz Al-Khunizan",
+    "windows": {
+      "wix": { "language": "en-US" }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "entitlements": null
+    }
+  }
+}

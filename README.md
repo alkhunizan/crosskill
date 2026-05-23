@@ -40,7 +40,7 @@ So you copy-paste. You forget one. They drift. You can't share. Your team can't 
 |---|---|
 | 🌐 **Web playground** | Open [crosskill.dev](https://crosskill.dev) — paste a skill, see every output, download a ZIP. No install. |
 | ⌨ **CLI** | `npx crosskill init` |
-| 🖥 **Desktop app** | [crosskill.app](https://crosskill.app) — Tauri 2 native app with watch mode (v0.4) |
+| 🖥 **Desktop app** | [crosskill.app](https://crosskill.app) — Tauri 2 native app with watch mode. Win/macOS/Linux installers on [GitHub Releases](https://github.com/alkhunizan/crosskill/releases). |
 
 ## Install
 
@@ -278,7 +278,7 @@ This repo is a Bun-workspace monorepo:
 - `packages/cli/` — `crosskill` CLI binary, depends on `@crosskill/core` via `workspace:*`
 - `packages/skills/` — `@crosskill/skills`, the starter skills shipped to every consumer
 - `apps/web/` — `crosskill.dev` web playground (Next.js 14 static export, Monaco editor)
-- `apps/desktop/` — `crosskill.app` Tauri desktop app (coming in v0.4.0)
+- `apps/desktop/` — `crosskill.app` Tauri 2 native desktop app (`bun run --filter '@crosskill/desktop' tauri:dev` to run locally; requires Rust)
 
 ```bash
 bun install            # install all workspace deps
