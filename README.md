@@ -62,8 +62,12 @@ npx crosskill test
 # 6. In CI: verify outputs match crosskill.lock
 npx crosskill check
 
-# 7. Install a community skill
-npx crosskill add aziz/najdi-writer
+# 7. Install a bundled starter skill...
+npx crosskill add code-reviewer
+
+# ...or a skill from any public GitHub repo (with optional @ref to pin)
+npx crosskill add azizme-com/some-skill-repo
+npx crosskill add azizme-com/some-skill-repo@v0.1.0 --sha <hex>
 ```
 
 ## What gets generated

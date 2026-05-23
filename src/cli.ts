@@ -57,9 +57,13 @@ program
 
 program
   .command("add <skill>")
-  .description("Add a built-in starter skill (e.g. code-reviewer)")
-  .action(async (skill: string) => {
-    await addCommand(skill);
+  .description(
+    "Add a skill from a bundled starter (`code-reviewer`) or a GitHub repo (`user/repo[@ref]`)"
+  )
+  .option("--dry-run", "Resolve and print preview without writing to disk")
+  .option("--sha <hex>", "Required SHA-256 of the resolved content (pinning)")
+  .action(async (skill: string, opts: { dryRun?: boolean; sha?: string }) => {
+    await addCommand(skill, { dryRun: opts.dryRun, sha: opts.sha });
   });
 
 program.parseAsync(process.argv).catch((err) => {
