@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -25,7 +25,7 @@ export const codexCompiler: Compiler = {
       "",
     ].join("\n");
 
-    const outputPath = join(outputRoot, "AGENTS.md");
+    const outputPath = joinPath(outputRoot, "AGENTS.md");
     return { target: "codex", outputPath, content };
   },
 };

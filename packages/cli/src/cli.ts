@@ -15,7 +15,7 @@ program
   .description(
     "Write AI coding-agent skills once. Compile to Claude Code, Cursor, Codex, Windsurf, Aider, OpenCode, Gemini CLI."
   )
-  .version("0.2.0");
+  .version("0.3.0");
 
 program
   .command("init")

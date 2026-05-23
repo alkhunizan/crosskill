@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -12,7 +12,7 @@ export const windsurfCompiler: Compiler = {
   compile(skill: Skill, outputRoot: string): CompileResult {
     const { name, description } = skill.frontmatter;
     const content = `# ${name}\n\n> ${description}\n\n${skill.body}\n`;
-    const outputPath = join(outputRoot, `.windsurf/rules/${name}.md`);
+    const outputPath = joinPath(outputRoot, `.windsurf/rules/${name}.md`);
     return { target: "windsurf", outputPath, content };
   },
 };

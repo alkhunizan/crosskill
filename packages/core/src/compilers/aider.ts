@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -16,7 +16,7 @@ export const aiderCompiler: Compiler = {
   compile(skill: Skill, outputRoot: string): CompileResult {
     const { name, description } = skill.frontmatter;
     const content = `# ${name}\n\n${description}\n\n${skill.body}\n`;
-    const outputPath = join(outputRoot, `.aider/skills/${name}.md`);
+    const outputPath = joinPath(outputRoot, `.aider/skills/${name}.md`);
     return { target: "aider", outputPath, content };
   },
 };

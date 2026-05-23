@@ -1,0 +1,5 @@
+.next/
+out/
+public/skills/
+node_modules/
+*.tsbuildinfo

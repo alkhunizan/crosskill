@@ -1,6 +1,6 @@
 {
   "name": "crosskill-monorepo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -9,8 +9,9 @@
   ],
   "scripts": {
     "build": "bun run --filter '@crosskill/core' build && bun run --filter 'crosskill' build",
+    "build:web": "bun run --filter '@crosskill/core' build && bun run --filter '@crosskill/web' build",
     "test": "bun test",
-    "typecheck": "bun run --filter '@crosskill/core' typecheck && bun run --filter 'crosskill' typecheck",
+    "typecheck": "bun run --filter '@crosskill/core' typecheck && bun run --filter 'crosskill' typecheck && bun run --filter '@crosskill/web' typecheck",
     "format": "prettier --write \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"apps/*/{src,app}/**/*.{ts,tsx}\""
   },

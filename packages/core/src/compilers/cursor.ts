@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -23,7 +23,7 @@ export const cursorCompiler: Compiler = {
     ].join("\n");
 
     const content = `${frontmatter}# ${name}\n\n${skill.body}\n`;
-    const outputPath = join(outputRoot, `.cursor/rules/${name}.mdc`);
+    const outputPath = joinPath(outputRoot, `.cursor/rules/${name}.mdc`);
 
     return { target: "cursor", outputPath, content };
   },

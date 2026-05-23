@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -27,7 +27,7 @@ export const claudeCompiler: Compiler = {
       .join("\n");
 
     const content = `${frontmatter}${skill.body}\n`;
-    const outputPath = join(outputRoot, `.claude/skills/${name}/SKILL.md`);
+    const outputPath = joinPath(outputRoot, `.claude/skills/${name}/SKILL.md`);
 
     return { target: "claude", outputPath, content };
   },

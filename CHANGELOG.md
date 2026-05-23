@@ -5,6 +5,36 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-05-23
+
+### Added
+- **Web playground at `apps/web/`** — Next.js 14 with static export, deployable to
+  any static host. Monaco editor + live compile preview + 7-tab output strip +
+  starter gallery + lz-string share URLs + JSZip "Download ZIP" of every
+  compiled output.
+- **Browser bundle of `@crosskill/core`** at `dist/browser/index.js`. The
+  `exports` map and `browser` field point bundlers at it automatically; Next's
+  Webpack alias forces it explicitly. Node consumers still get the original
+  `dist/index.js`.
+- **Portable path join** in `packages/core/src/path-portable.ts`. Compilers
+  no longer import `node:path`, which was blocking the browser build (Webpack 5
+  refuses to resolve `node:` URIs). POSIX-only join, which Windows still
+  accepts on filesystem writes; the lockfile was already POSIX via
+  `toPosixPath()`.
+- `prebuild` + `predev` hook in `apps/web/` copies starter skills out of
+  `packages/skills/` into `public/skills/` so the static site can fetch them
+  without a backend.
+
+### Changed
+- Workspace `build`/`typecheck` scripts now include the web app behind a
+  separate `build:web` target so CI can build CLI-only or full-tree as needed.
+
+### Verified
+- 85/85 tests still pass; typecheck clean across all three packages.
+- Compiled skill outputs (Claude/Cursor/AGENTS.md/etc.) remain byte-identical
+  to v0.1.0; lockfile `crosskillVersion` bumps to `0.3.0`.
+- Static export builds clean with zero `node:` schemes in the client bundle.
+
 ## [0.2.0] — 2026-05-23
 
 ### Changed

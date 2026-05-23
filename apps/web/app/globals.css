@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0a0a0b;
+  --color-bg-elev: #14141a;
+  --color-bg-elev-2: #1d1d26;
+  --color-border: #2a2a36;
+
+  --color-text: #e6e6f0;
+  --color-text-dim: #9696aa;
+  --color-text-faint: #5a5a6e;
+
+  --color-accent: #ff6b35;
+  --color-accent-dim: #ff6b3522;
+
+  --color-success: #4ade80;
+  --color-warn: #fbbf24;
+  --color-error: #f87171;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+}
+
+*::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+/* Quiet the default scrollbar so it doesn't clash with the dark theme. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-faint);
+}

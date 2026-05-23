@@ -1,0 +1,22 @@
+[build]
+  command = "cd ../.. && bun install && bun run --filter '@crosskill/core' build && cd apps/web && bun run build"
+  publish = "out"
+  base = "apps/web"
+
+[build.environment]
+  NODE_VERSION = "20"
+  BUN_VERSION = "latest"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "interest-cohort=()"
+
+[[redirects]]
+  from = "/docs/*"
+  to = "https://github.com/alkhunizan/crosskill/blob/main/docs/:splat"
+  status = 301
+  force = false

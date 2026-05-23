@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -19,7 +19,7 @@ export const opencodeCompiler: Compiler = {
       "",
     ].join("\n");
     const content = `${fm}${skill.body}\n`;
-    const outputPath = join(outputRoot, `.opencode/skills/${name}.md`);
+    const outputPath = joinPath(outputRoot, `.opencode/skills/${name}.md`);
     return { target: "opencode", outputPath, content };
   },
 };

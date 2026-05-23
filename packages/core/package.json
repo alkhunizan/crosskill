@@ -1,6 +1,6 @@
 {
   "name": "@crosskill/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Cross-platform compiler for AI coding-agent skills — core library",
   "type": "module",
   "main": "./dist/index.js",
@@ -9,6 +9,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "browser": "./dist/browser/index.js",
       "import": "./dist/index.js"
     },
     "./node": {
@@ -16,13 +17,16 @@
       "import": "./dist/node.js"
     }
   },
+  "browser": {
+    "./dist/index.js": "./dist/browser/index.js"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target node --sourcemap=linked && bun build ./src/node.ts --outdir ./dist --target node --sourcemap=linked && bun run build:types",
+    "build": "bun build ./src/index.ts --outdir ./dist --target node --sourcemap=linked && bun build ./src/index.ts --outdir ./dist/browser --target browser --sourcemap=linked && bun build ./src/node.ts --outdir ./dist --target node --sourcemap=linked && bun run build:types",
     "build:types": "tsc -p tsconfig.json",
     "test": "bun test",
     "typecheck": "tsc --noEmit"

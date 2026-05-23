@@ -34,6 +34,14 @@ So you copy-paste. You forget one. They drift. You can't share. Your team can't 
 
 **crosskill** fixes that. Write a skill once. Compile to all of them.
 
+## Try it instantly
+
+| Surface | How |
+|---|---|
+| 🌐 **Web playground** | Open [crosskill.dev](https://crosskill.dev) — paste a skill, see every output, download a ZIP. No install. |
+| ⌨ **CLI** | `npx crosskill init` |
+| 🖥 **Desktop app** | [crosskill.app](https://crosskill.app) — Tauri 2 native app with watch mode (v0.4) |
+
 ## Install
 
 ```bash
@@ -269,7 +277,7 @@ This repo is a Bun-workspace monorepo:
 - `packages/core/` — `@crosskill/core` library (browser-safe parser, linter, compilers; Node-only helpers live at `@crosskill/core/node`)
 - `packages/cli/` — `crosskill` CLI binary, depends on `@crosskill/core` via `workspace:*`
 - `packages/skills/` — `@crosskill/skills`, the starter skills shipped to every consumer
-- `apps/web/` — `crosskill.dev` web playground (coming in v0.3.0)
+- `apps/web/` — `crosskill.dev` web playground (Next.js 14 static export, Monaco editor)
 - `apps/desktop/` — `crosskill.app` Tauri desktop app (coming in v0.4.0)
 
 ```bash

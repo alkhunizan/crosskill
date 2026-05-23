@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { joinPath } from "../path-portable.js";
 import type { Compiler, Skill, CompileResult } from "../schema.js";
 
 /**
@@ -22,7 +22,7 @@ export const copilotCompiler: Compiler = {
       "",
     ].join("\n");
 
-    const outputPath = join(outputRoot, ".github/copilot-instructions.md");
+    const outputPath = joinPath(outputRoot, ".github/copilot-instructions.md");
     return { target: "copilot", outputPath, content };
   },
 };
