@@ -22,7 +22,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun build ./src/cli.ts --outdir ./dist --target node && bun build ./src/index.ts --outdir ./dist --target node",
+    "build": "bun build ./src/cli.ts --outdir ./dist --target node --sourcemap=linked && bun build ./src/index.ts --outdir ./dist --target node --sourcemap=linked",
     "dev": "bun --watch ./src/cli.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit",

@@ -1,5 +1,6 @@
-import { parseSkillString } from "./parser.js";
+import { parseSkillString, SkillParseError } from "./parser.js";
 import { COMPILERS } from "./compilers/index.js";
+import { DEFAULT_LINT_CONFIG, lintSkill, type LintConfig, type LintIssue } from "./linter.js";
 import type { CompileResult, Skill, SupportedTarget } from "./schema.js";
 
 /**
@@ -53,4 +54,88 @@ export function compileSkillAll(
     results.push(compiler.compile(parsed, outputRoot));
   }
   return results;
+}
+
+/**
+ * Preview result — shape designed for editor integrations. One call returns
+ * everything needed to render a live multi-target preview alongside warnings:
+ * parse status, lint issues, and compiled outputs for every enabled target.
+ *
+ * - When the buffer doesn't parse, `skill` is `undefined`, `parseError` is
+ *   populated, `lintIssues` is empty, and `compiled` is empty.
+ * - When the buffer parses, `skill` is populated, `parseError` is `undefined`,
+ *   `lintIssues` reflects the linter result, and `compiled` has one entry per
+ *   enabled-and-registered target.
+ *
+ * Pure function — does not touch the filesystem, no network, no surprises.
+ */
+export interface PreviewResult {
+  skill?: Skill;
+  parseError?: SkillParseError | Error;
+  lintIssues: LintIssue[];
+  compiled: CompileResult[];
+}
+
+export interface PreviewOptions {
+  /** Lint config override. Defaults to crosskill's `DEFAULT_LINT_CONFIG`. */
+  lintConfig?: LintConfig;
+  /**
+   * Restrict compilation to a subset of targets. Useful for the editor's
+   * preview pane — render only the tab the user is looking at. Defaults to
+   * "every target the skill's front-matter enables".
+   */
+  onlyTargets?: SupportedTarget[];
+  /** Conceptual output root for the compilers. Defaults to ".". */
+  outputRoot?: string;
+}
+
+/**
+ * Compile a buffer-style skill source for an editor preview. One call,
+ * everything an integrator needs.
+ *
+ * @example
+ * const preview = compileSkillForPreview(editor.getValue(), {
+ *   onlyTargets: [activeTab],
+ * });
+ * if (preview.parseError) {
+ *   showInlineError(preview.parseError.message);
+ *   return;
+ * }
+ * renderLintGutter(preview.lintIssues);
+ * for (const result of preview.compiled) {
+ *   tabs[result.target].setText(result.content);
+ * }
+ */
+export function compileSkillForPreview(
+  source: string,
+  opts: PreviewOptions = {}
+): PreviewResult {
+  let skill: Skill;
+  try {
+    skill = parseSkillString(source);
+  } catch (err) {
+    return {
+      parseError: err instanceof Error ? err : new Error(String(err)),
+      lintIssues: [],
+      compiled: [],
+    };
+  }
+
+  const lintIssues = lintSkill(skill, opts.lintConfig ?? DEFAULT_LINT_CONFIG);
+  const enabled = skill.frontmatter.targets ?? {};
+  const wantedTargets = opts.onlyTargets
+    ? new Set(opts.onlyTargets)
+    : null;
+  const outputRoot = opts.outputRoot ?? ".";
+  const compiled: CompileResult[] = [];
+
+  for (const target of Object.keys(enabled) as SupportedTarget[]) {
+    if (!enabled[target]) continue;
+    if (wantedTargets && !wantedTargets.has(target)) continue;
+    const compiler = COMPILERS[target];
+    if (!compiler) continue;
+    compiled.push(compiler.compile(skill, outputRoot));
+  }
+
+  return { skill, lintIssues, compiled };
 }

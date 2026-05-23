@@ -3,6 +3,8 @@ export { parseSkillFile, parseSkillString, SkillParseError } from "./parser.js";
 export { lintSkill, DEFAULT_LINT_CONFIG } from "./linter.js";
 export type { LintIssue, LintConfig } from "./linter.js";
 export { COMPILERS, getCompiler } from "./compilers/index.js";
+export { compileSkill, compileSkillAll, compileSkillForPreview } from "./compile.js";
+export type { PreviewResult, PreviewOptions } from "./compile.js";
 export {
   SkillFrontmatterSchema,
   SUPPORTED_TARGETS,
