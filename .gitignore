@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+*.tsbuildinfo
+.vscode/
+.idea/
+coverage/
+.bun/
+*.tgz
+out/
+.cache/
+
+# Polyskill compile outputs (in user repos that consume this tool)
+# Uncomment if you compile into the same repo
+# .claude/skills/
+# .cursor/rules/
+# AGENTS.md
+# .windsurf/
+# .aider.conf.yml
