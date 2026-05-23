@@ -69,7 +69,7 @@ From one `code-reviewer.skill.md`:
 ✓ .cursor/rules/code-reviewer.mdc
 ✓ AGENTS.md                    (Codex / OpenAI)
 ✓ .windsurf/rules/code-reviewer.md
-✓ .aider.conf.yml              (rules section)
+✓ .aider/skills/code-reviewer.md
 ✓ .opencode/skills/code-reviewer.md
 ✓ .gemini/skills/code-reviewer.md
 ```
@@ -141,11 +141,11 @@ Run `npx crosskill add @crosskill/<name>` to drop any of these into your repo:
 | Cursor | ✅ Stable | `.cursor/rules/<name>.mdc` |
 | Codex / OpenAI | ✅ Stable | `AGENTS.md` |
 | Windsurf | ✅ Stable | `.windsurf/rules/<name>.md` |
-| Aider | ✅ Stable | `.aider.conf.yml` |
+| Aider | ✅ Stable | `.aider/skills/<name>.md` |
 | OpenCode | ✅ Stable | `.opencode/skills/<name>.md` |
 | Gemini CLI | ✅ Stable | `.gemini/skills/<name>.md` |
-| Copilot Workspace | 🟡 Beta | `.github/copilot-instructions.md` |
-| Continue.dev | 🟡 Beta | `.continue/<name>.md` |
+| Copilot Workspace | ✅ Stable | `.github/copilot-instructions.md` |
+| Continue.dev | ✅ Stable | `.continue/<name>.md` |
 | Zed Assistant | 🚧 Planned | — |
 | Cline | 🚧 Planned | — |
 
@@ -188,7 +188,7 @@ Full spec: [docs/format.md](./docs/format.md).
     "cursor": ".cursor/rules",
     "codex": "AGENTS.md",
     "windsurf": ".windsurf/rules",
-    "aider": ".aider.conf.yml",
+    "aider": ".aider/skills",
     "opencode": ".opencode/skills",
     "gemini": ".gemini/skills"
   },

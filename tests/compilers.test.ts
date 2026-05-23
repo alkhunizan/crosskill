@@ -15,6 +15,8 @@ targets:
   aider: true
   opencode: true
   gemini: true
+  copilot: true
+  continue: true
 ---
 
 You are a code reviewer.
@@ -66,5 +68,17 @@ describe("compilers", () => {
   test("gemini compiler emits a per-skill .md", () => {
     const r = COMPILERS.gemini!.compile(skill, "/repo");
     expect(r.outputPath.replace(/\\/g, "/")).toBe("/repo/.gemini/skills/code-reviewer.md");
+  });
+
+  test("copilot compiler emits a .github/copilot-instructions.md section", () => {
+    const r = COMPILERS.copilot!.compile(skill, "/repo");
+    expect(r.outputPath.replace(/\\/g, "/")).toBe("/repo/.github/copilot-instructions.md");
+    expect(r.content.startsWith("## code-reviewer")).toBe(true);
+  });
+
+  test("continue compiler emits a per-skill .md under .continue/", () => {
+    const r = COMPILERS.continue!.compile(skill, "/repo");
+    expect(r.outputPath.replace(/\\/g, "/")).toBe("/repo/.continue/code-reviewer.md");
+    expect(r.content).toContain("# code-reviewer");
   });
 });

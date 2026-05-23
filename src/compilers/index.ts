@@ -6,6 +6,8 @@ import { windsurfCompiler } from "./windsurf.js";
 import { aiderCompiler } from "./aider.js";
 import { opencodeCompiler } from "./opencode.js";
 import { geminiCompiler } from "./gemini.js";
+import { copilotCompiler } from "./copilot.js";
+import { continueCompiler } from "./continue.js";
 
 export const COMPILERS: Record<SupportedTarget, Compiler | undefined> = {
   claude: claudeCompiler,
@@ -15,8 +17,8 @@ export const COMPILERS: Record<SupportedTarget, Compiler | undefined> = {
   aider: aiderCompiler,
   opencode: opencodeCompiler,
   gemini: geminiCompiler,
-  copilot: undefined, // beta — placeholder
-  continue: undefined, // beta — placeholder
+  copilot: copilotCompiler,
+  continue: continueCompiler,
 };
 
 export function getCompiler(target: SupportedTarget): Compiler | undefined {
