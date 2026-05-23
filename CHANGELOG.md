@@ -5,6 +5,25 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-05-23
+
+### Added
+- Issue templates (bug / feature / new target / new starter skill) and a PR
+  template that reminds contributors to run tests + typecheck + bump the
+  CHANGELOG.
+- `.github/FUNDING.yml`, `.github/dependabot.yml`.
+- `scripts/bump-version.ts` — one command to bump every version stamp in
+  lockstep (six package.json files + `Cargo.toml` + `tauri.conf.json` +
+  the CLI's `.version()` literal + lockfile.ts's `CROSSKILL_VERSION`).
+  Wired as `bun run bump-version <semver>`.
+- `PLAN/LAUNCH_POSTS.md` — every launch-day post (HN, X x2 incl. Najdi,
+  Reddit r/LocalLLaMA + r/ChatGPTCoding, Product Hunt, LinkedIn, DM
+  template) in a single paste-ready file.
+
+### Changed
+- Repo references updated to `alkhunizan/crosskill` across README, example
+  workflow, CONTRIBUTING.md, and docs/targets.md.
+
 ## [0.4.0] — 2026-05-23
 
 ### Added
