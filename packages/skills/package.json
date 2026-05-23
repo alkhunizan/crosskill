@@ -1,6 +1,6 @@
 {
   "name": "@crosskill/skills",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Starter skills for crosskill — production-ready *.skill.md files you can drop into any AI coding tool",
   "type": "module",
   "main": "./index.js",

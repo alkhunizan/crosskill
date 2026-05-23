@@ -11,7 +11,7 @@ export const LOCKFILE_VERSION = 1;
  * with `package.json` — single source of truth would be nice but pulling
  * package.json into the bundle is more trouble than it's worth.
  */
-export const CROSSKILL_VERSION = "0.4.1";
+export const CROSSKILL_VERSION = "0.4.2";
 
 /**
  * Lockfile schema (v1).

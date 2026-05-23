@@ -5,6 +5,21 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.4.2] — 2026-05-23
+
+### Fixed
+- `ci.yml` now builds `@crosskill/core` before running `bun run typecheck`.
+  A fresh checkout has no `packages/core/dist/`, so the CLI's typecheck
+  (which imports from `@crosskill/core/node`) couldn't resolve the
+  module and cascaded into a pile of `TS7006: implicit any` errors.
+
+### Reason for the version bump
+- `release.yml` was added in the same commit that `v0.4.0` points at,
+  and pushed to `main` in the same batch as the `v*` tags. GitHub
+  Actions didn't fire the workflow for the earlier tags. Cutting
+  `v0.4.2` is the cleanest way to trigger a real desktop-installer
+  build without rewriting history.
+
 ## [0.4.1] — 2026-05-23
 
 ### Added
