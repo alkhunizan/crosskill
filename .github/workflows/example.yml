@@ -19,7 +19,7 @@ jobs:
   skills:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: alkhunizan/crosskill/.github/actions/crosskill@main
         with:
           mode: all # lint | check | test | all
