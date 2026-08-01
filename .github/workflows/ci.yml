@@ -19,7 +19,7 @@ jobs:
           # Pin so setup-bun doesn't need to call the GH API for tag lookup —
           # that path returned 401 during the v0.4.2 release run.
           bun-version: 1.3.14
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
       - run: bun install
